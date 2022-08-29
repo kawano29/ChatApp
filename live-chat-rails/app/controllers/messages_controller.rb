@@ -1,5 +1,5 @@
 class MessagesController < ApplicationController
-  before_action :authenticate_user!, only: ["index"]
+  before_action :authenticate_user!, only: %i[index destroy]
 
   def index
     messages = Message.includes(:user, [likes: :user])
@@ -16,5 +16,15 @@ class MessagesController < ApplicationController
     end
 
     render json: messages_array, status: :ok
+  end
+
+  def destroy
+    message = Message.find(params[:id])
+
+    if message.destroy
+      render json: { id: message.id, email: message.user.email, message: '削除に成功しました' }, status: :ok
+    else
+      render json: { message: '削除できませんでした', errors: like.errors.messages }, status: :bad_request
+    end
   end
 end
