@@ -11,7 +11,10 @@
               <span class="heart-count">{{ message.likes.length }}</span>
             </div>
           </div>
-          <span class="created-at">{{ message.created_at }}前</span>
+          <div>
+            <span class="created-at">{{ message.created_at }}前</span>
+            <button @click="deleteMessage(message.id)">削除</button>
+          </div>
         </li>
       </ul>
     </div>
@@ -78,6 +81,25 @@ export default {
         console.log(error)
       }      
     },
+    async deleteMessage(messageId) {
+      try {
+        const res = await axios.delete(`http://localhost:3000/messages/${messageId}`,
+          {
+            headers: {
+              uid: this.uid,
+              "access-token": window.localStorage.getItem('access-token'),
+              client: window.localStorage.getItem('client')
+            }
+          })
+        
+        if (!res) { 
+          new Error('いいねを削除できませんでした')
+        }
+        this.$emit('connectCable')
+      } catch (error) {
+        console.log(error)
+      }
+    },
     scrollToBottom () {
       const element = this.$refs.messages
       element.scrollTop = element.scrollHeight
@@ -131,11 +153,17 @@ export default {
     font-size: 13px;
   }
   .created-at {
-    display: block;
     color: #999;
     font-size: 12px;
     margin-bottom: 20px;
     margin-left: 4px;
+    margin-right: 4px;
+  }
+  button {
+    float: right;
+    font-size: 10px;
+    padding: 2px 5px;
+    margin-top: 5px;
   }
   .messages {
     max-height: 400px;
