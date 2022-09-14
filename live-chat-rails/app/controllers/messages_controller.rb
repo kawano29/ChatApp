@@ -2,7 +2,8 @@ class MessagesController < ApplicationController
   before_action :authenticate_user!, only: %i[index destroy]
 
   def index
-    messages = Message.includes(:user, [likes: :user])
+    room = Room.find(params[:room_id])
+    messages = room.messages.includes(:user, [likes: :user])
     messages_array = messages.map do |message|
       {
         id: message.id,

@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <div>{{ $route.params.id }}</div>
     <Navbar />
     <ChatWindow @connectCable="connectCable" :messages="formattedMessages" ref="chatWindow"/>
     <NewChatForm @connectCable="connectCable"/>
@@ -34,7 +35,7 @@ export default {
   methods: {
     async getMessages () {
       try {
-        const res = await axios.get('http://localhost:3000/messages', {
+        const res = await axios.get(`http://localhost:3000/rooms/${this.$route.params.id}/messages`, {
           headers: {
             uid: window.localStorage.getItem('uid'),
             "access-token": window.localStorage.getItem('access-token'),
@@ -52,25 +53,28 @@ export default {
     connectCable (message) {
       this.messageChannel.perform('receive', {
         message: message,
+        roomId: this.$route.params.id,
         email: window.localStorage.getItem('uid')
       })
     },
   },
   mounted() {
     const cable = ActionCable.createConsumer('ws://localhost:3000/cable')
-    this.messageChannel = cable.subscriptions.create('RoomChannel', {
-      connected: () => {
-        this.getMessages().then(() => {
-          this.$refs.chatWindow.scrollToBottom()
-        })
-      },
-      received: () => {
-        this.getMessages().then(() => {
-          this.$refs.chatWindow.scrollToBottom()
-        })
-
+    this.messageChannel = cable.subscriptions.create(
+      { channel: "RoomChannel", room_id: this.$route.params.id, user_uid: window.localStorage.getItem('uid') },
+      {
+        connected: () => {
+          this.getMessages().then(() => {
+            this.$refs.chatWindow.scrollToBottom()
+          })
+        },
+        received: () => {
+          this.getMessages().then(() => {
+            this.$refs.chatWindow.scrollToBottom()
+          })
+        }
       }
-    })
+    )
   },
   beforeUnmount () { 
     this.messageChannel.unsubscribe()

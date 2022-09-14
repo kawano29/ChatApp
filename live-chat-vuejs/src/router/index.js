@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Welcome from '../views/Welcome'
 import Chatroom from '../views/Chatroom'
+import RoomIndex from '../views/RoomIndex'
 import useValidate from '../auth/validate'
 
 const { error, validate } = useValidate()
@@ -52,9 +53,15 @@ const routes = [
     beforeEnter: noRequireAuth
   },
   {
-    path: '/chatroom',
+    path: '/chatroom/:id',
     name: 'Chatroom',
     component: Chatroom,
+    beforeEnter: requireAuth
+  },
+  {
+    path: '/room_index',
+    name: 'RoomIndex',
+    component: RoomIndex,
     beforeEnter: requireAuth
   }
 ]
