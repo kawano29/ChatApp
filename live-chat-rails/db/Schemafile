@@ -27,7 +27,7 @@ create_table "rooms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :
   # t.index ["message_id"], name: "index_rooms_on_message_id"
 end
 
-create_table "users_rooms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade, id: false do |t|
+create_table "rooms_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade, id: false do |t|
   t.belongs_to :user
   t.belongs_to :room
 end
