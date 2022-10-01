@@ -5,6 +5,7 @@ RUN apt-get update -qq && \
                        libpq-dev \        
                        nodejs \
                        mariadb-client-10.3 \
+                       vim \
    && rm -rf /var/lib/apt/lists/* 
 
 RUN mkdir /app
